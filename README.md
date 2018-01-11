@@ -1,16 +1,16 @@
-#rollup-plugin-import-resolver
+# rollup-plugin-import-resolver
 
 Resolves import statements by using aliases and file extensions when bundling with rollup.
 Also resolves the file when importing a directory.
 
 ## Install
 
-```
-yarn add rollup-plugin-import-resolver --dev
+```bash
+yarn add --dev rollup-plugin-import-resolver
 
-OR
+# OR
 
-npm install rollup-plugin-import-resolver --save-dev
+npm install --save-dev rollup-plugin-import-resolver
 ```
 
 ## Options
@@ -40,14 +40,17 @@ defaultOptions = {
 ## Usage scenarios
 
 Consider the following project structure
-```
-src/
-    index.js
-    utils/
-            util1.js
-            util2.jsm
-            index.js
-```
+
+    |-- .. 
+    '--src
+       |-- ..
+       |-- index.js
+       '-- utils
+           |-- ..
+           |-- util1.js
+           |-- util2.jsm
+           '-- index.js
+
 
 and plugin options
 
