@@ -1,0 +1,25 @@
+{
+    "name": "rollup-plugin-import-resolver",
+    "version": "1.0.0",
+    "description": "Resolves import statements using aliases and file extensions",
+    "main": "src/index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/opis-assets/rollup-plugin-import-resolver.git"
+    },
+    "keywords": [
+        "rollup",
+        "import",
+        "alias",
+        "extensions"
+    ],
+    "author": "Sorin Sarca <sarca_sorin@hotmail.com>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/opis-assets/rollup-plugin-import-resolver/issues"
+    },
+    "homepage": "https://github.com/opis-assets/rollup-plugin-import-resolver"
+}
