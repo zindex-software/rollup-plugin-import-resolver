@@ -42,7 +42,7 @@ defaultOptions = {
 Consider the following project structure
 
     |-- .. 
-    '--src
+    '-- src
        |-- ..
        |-- index.js
        '-- utils
