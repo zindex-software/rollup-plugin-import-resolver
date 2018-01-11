@@ -2,6 +2,17 @@
 
 Resolves import statements by using aliases and file extensions when bundling with rollup.
 Also resolves the file when importing a directory.
+
+## Install
+
+```
+yarn add rollup-plugin-import-resolver --dev
+
+OR
+
+npm install rollup-plugin-import-resolver --save-dev
+```
+
 ## Options
 
 ```js
