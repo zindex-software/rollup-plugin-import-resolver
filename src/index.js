@@ -24,7 +24,7 @@ function getAlias(file, aliases) {
 
 function getExistingFileWithExt(file, extensions) {
     for (let i = 0; i < extensions.length; i++) {
-        let f = file + options.extensions[i];
+        let f = file + extensions[i];
         if (fs.existsSync(f)) {
             return f;
         }
