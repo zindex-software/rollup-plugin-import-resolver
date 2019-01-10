@@ -26,14 +26,17 @@ importResolver({
         'lib': './node_modules/otherlib/src'
     },
     // index file name without extension, default = 'index'
-    indexFile: 'index'
+    indexFile: 'index',
+    // path to node_modules dir, default = ./node_modules
+    modulesDir: '/path/to/node_modules'
 });
 
 // if called without options, the defaults are
 defaultOptions = {
     extensions: ['js'],
     alias: {},
-    indexFile: 'index'
+    indexFile: 'index',
+    modulesDir: './node_modules'
 };
 ```
 
@@ -96,4 +99,11 @@ import somelib from "somelib";
 import component1 from "somelib/component1";
 // resolved to ./node_modules/other_lib/src/component1.js
 // OR if component1 is a folder ./node_modules/other_lib/src/component1/index.js
+```
+
+### Resolve modules dir
+
+```js
+import something from "vendorlib/file.js";
+// resolved to /path/to/node_modules/vendorlib/file.js
 ```

@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 
 const localImport = /^[.]{1,2}\//;
+const ignoreFiles = /\?/;
 
 function isAlias(file, alias) {
     if (alias === file) {
@@ -32,6 +33,27 @@ function getExistingFileWithExt(file, extensions) {
     return null;
 }
 
+function resolveFile(file, extensions, index) {
+    if (fs.existsSync(file)) {
+        if (!fs.statSync(file).isDirectory()) {
+            // Consider it a file
+            return file;
+        }
+        // There is a dir, also check if there isn't a file with extension
+        // on the same level with dir
+        let f = getExistingFileWithExt(file, extensions);
+        if (f !== null) {
+            return f;
+        }
+
+        // Consider the file to be index.*
+        file = path.resolve(file, '.', indexFile);
+    }
+
+    // Try to get using extensions
+    return getExistingFileWithExt(file, extensions);
+}
+
 module.exports = function rollupPluginImportResolver(options) {
     if (!options) {
         options = {extensions: ['.js'], alias: {}};
@@ -56,9 +78,15 @@ module.exports = function rollupPluginImportResolver(options) {
         options.indexFile = 'index';
     }
 
+    if (!options.modulesDir) {
+        options.modulesDir = './node_modules';
+    }
+
+    const cache = options.cache || {};
+
     return {
         resolveId: function (importee, importer) {
-            if (!importer) {
+            if (!importer || ignoreFiles.test(importee)) {
                 return null;
             }
 
@@ -67,37 +95,28 @@ module.exports = function rollupPluginImportResolver(options) {
                 // Check for alias
                 let alias = getAlias(importee, options.alias);
                 if (alias === null) {
-                    return null;
+                    if (!options.modulesDir) {
+                        return null;
+                    }
+                    file = path.resolve(options.modulesDir, importee);
+                } else {
+                    file = importee.substr(alias.length);
+                    if (file !== '') {
+                        file = '.' + file;
+                    }
+                    file = path.resolve(options.alias[alias], file);
                 }
-                file = importee.substr(alias.length);
-                if (file !== '') {
-                    file = '.' + file;
-                }
-                file = path.resolve(options.alias[alias], file);
             }
             else {
                 // Local import is relative to importer
                 file = path.resolve(importer, '..', importee);
             }
 
-            if (fs.existsSync(file)) {
-                if (!fs.statSync(file).isDirectory()) {
-                    // Consider it a file
-                    return file;
-                }
-                // There is a dir, also check if there isn't a file with extension
-                // on the same level with dir
-                let f = getExistingFileWithExt(file, options.extensions);
-                if (f !== null) {
-                    return f;
-                }
-
-                // Consider the file to be index.*
-                file = path.resolve(file, '.', options.indexFile);
+            if (!cache.hasOwnProperty(file)) {
+                 cache[file] = resolveFile(file, options.extensions, options.indexFile);
             }
 
-            // Try to get using extensions
-            return getExistingFileWithExt(file, options.extensions);
+            return cache[file];
         }
     };
 };
