@@ -1,6 +1,6 @@
 {
     "name": "rollup-plugin-import-resolver",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Resolves import statements using aliases and file extensions",
     "main": "src/index.js",
     "scripts": {
