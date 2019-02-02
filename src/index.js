@@ -47,7 +47,7 @@ function resolveFile(file, extensions, index) {
         }
 
         // Consider the file to be index.*
-        file = path.resolve(file, '.', indexFile);
+        file = path.resolve(file, '.', index);
     }
 
     // Try to get using extensions
