@@ -92,6 +92,10 @@ module.exports = function rollupPluginImportResolver(options) {
 
             let file = null;
             if (!localImport.test(importee)) {
+                if (cache.hasOwnProperty(importee)) {
+                    return cache[importee];
+                }
+
                 // Check for alias
                 let alias = getAlias(importee, options.alias);
                 if (alias === null) {
@@ -100,6 +104,18 @@ module.exports = function rollupPluginImportResolver(options) {
                     }
                     file = path.resolve(options.modulesDir, importee);
                 } else {
+                    let aliasPath = options.alias[alias];
+                    if (aliasPath.length > 0 && aliasPath[0] !== '.' && aliasPath[0] !== '/') {
+                        aliasPath = alias + '/' + aliasPath;
+                        if (options.modulesDir) {
+                            aliasPath = path.resolve(options.modulesDir, aliasPath);
+                        }
+                    }
+
+                    if (!fs.statSync(aliasPath).isDirectory()) {
+                        return cache[importee] = aliasPath;
+                    }
+
                     file = importee.substr(alias.length);
                     if (file !== '') {
                         file = '.' + file;
@@ -113,7 +129,7 @@ module.exports = function rollupPluginImportResolver(options) {
             }
 
             if (!cache.hasOwnProperty(file)) {
-                 cache[file] = resolveFile(file, options.extensions, options.indexFile);
+                cache[file] = resolveFile(file, options.extensions, options.indexFile);
             }
 
             return cache[file];

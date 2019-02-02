@@ -61,7 +61,8 @@ and plugin options
 {
     "extensions": [".js", ".jsm"],
     "alias": {
-        "somelib": "./node_modules/other_lib/src/"
+        "somelib": "./node_modules/other_lib/src/",
+        "lib3": "dist/lib3.esm.js"
     }
 }
 ```
@@ -99,6 +100,9 @@ import somelib from "somelib";
 import component1 from "somelib/component1";
 // resolved to ./node_modules/other_lib/src/component1.js
 // OR if component1 is a folder ./node_modules/other_lib/src/component1/index.js
+
+import lib3 from "lib3";
+// resolved to ./node_modules/lib3/dist/lib3.esm.js
 ```
 
 ### Resolve modules dir
