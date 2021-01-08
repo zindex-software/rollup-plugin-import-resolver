@@ -1,6 +1,6 @@
 {
     "name": "rollup-plugin-import-resolver",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "description": "Resolves import statements using aliases and file extensions",
     "main": "src/index.js",
     "scripts": {
@@ -8,7 +8,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/opis-assets/rollup-plugin-import-resolver.git"
+        "url": "git+https://github.com/zindex-software/rollup-plugin-import-resolver.git"
     },
     "keywords": [
         "rollup",
@@ -19,7 +19,7 @@
     "author": "Sorin Sarca <sarca_sorin@hotmail.com>",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/opis-assets/rollup-plugin-import-resolver/issues"
+        "url": "https://github.com/zindex-software/rollup-plugin-import-resolver/issues"
     },
-    "homepage": "https://github.com/opis-assets/rollup-plugin-import-resolver"
+    "homepage": "https://github.com/zindex-software/rollup-plugin-import-resolver"
 }
