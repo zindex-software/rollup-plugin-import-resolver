@@ -33,15 +33,62 @@ function getExistingFileWithExt(file, extensions) {
     return null;
 }
 
-function resolveFile(file, extensions, index) {
+function fromPackageJson(dir, key = true) {
+    if (key === true) {
+        key = 'module';
+    }
+
+    const package = path.resolve(dir, '.', 'package.json');
+
+    if (!fs.existsSync(package)) {
+        return null;
+    }
+
+    try {
+        const data = JSON.parse(fs.readFileSync(package));
+
+        if (!data) {
+            return null;
+        }
+
+        if (Array.isArray(key)) {
+            for (let i = 0; i < key.length; i++) {
+                if (!data.hasOwnProperty(key[i])) {
+                    continue;
+                }
+                let f = path.resolve(dir, '.', data[key[i]]);
+                if (fs.existsSync(f)) {
+                    return f;
+                }
+            }
+        } else if (data.hasOwnProperty(key)) {
+            let f = path.resolve(dir, '.', data[key]);
+            if (fs.existsSync(f)) {
+                return f;
+            }
+        }
+
+        return null;
+    } catch (e) {
+        return null;
+    }
+}
+
+function resolveFile(file, extensions, index, packageJson = false) {
     if (fs.existsSync(file)) {
         if (!fs.statSync(file).isDirectory()) {
             // Consider it a file
             return file;
         }
+        let f;
+        // Check if package.json is present
+        if (packageJson && (f = fromPackageJson(file, packageJson)) != null) {
+            return f;
+        }
+
         // There is a dir, also check if there isn't a file with extension
         // on the same level with dir
-        let f = getExistingFileWithExt(file, extensions);
+        f = getExistingFileWithExt(file, extensions);
         if (f !== null) {
             return f;
         }
@@ -129,7 +176,7 @@ module.exports = function rollupPluginImportResolver(options) {
             }
 
             if (!cache.hasOwnProperty(file)) {
-                cache[file] = resolveFile(file, options.extensions, options.indexFile);
+                cache[file] = resolveFile(file, options.extensions, options.indexFile, options.packageJson);
             }
 
             return cache[file];

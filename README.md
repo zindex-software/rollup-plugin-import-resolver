@@ -28,7 +28,10 @@ importResolver({
     // index file name without extension, default = 'index'
     indexFile: 'index',
     // path to node_modules dir, default = ./node_modules
-    modulesDir: '/path/to/node_modules'
+    modulesDir: '/path/to/node_modules',
+    // use "module" field from package.json to get the path
+    // you can set this to false to disable this behavior
+    packageJson: true,
 });
 
 // if called without options, the defaults are
@@ -36,7 +39,8 @@ defaultOptions = {
     extensions: ['js'],
     alias: {},
     indexFile: 'index',
-    modulesDir: './node_modules'
+    modulesDir: './node_modules',
+    packageJson: false
 };
 ```
 
@@ -110,4 +114,13 @@ import lib3 from "lib3";
 ```js
 import something from "vendorlib/file.js";
 // resolved to /path/to/node_modules/vendorlib/file.js
+```
+
+
+### Resolve from package.json "module" field
+
+```js
+import something from "vendorlib";
+// if package.json contains a "module" field, then it is used to resolve the path
+// resolved to ./node_modules/vendorlib/path-from-package-json-module-field.js
 ```
