@@ -1,7 +1,7 @@
 # rollup-plugin-import-resolver
 
 Resolves import statements by using aliases and file extensions when bundling with rollup.
-Also resolves the file when importing a directory.
+Also resolves the file when importing a directory. Supports PnP.
 
 ## Install
 

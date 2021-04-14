@@ -4,6 +4,15 @@ const fs = require('fs');
 const localImport = /^[.]{1,2}\//;
 const ignoreFiles = /\?/;
 
+const pnp = process.versions.pnp ? require('pnpapi') : null;
+
+function resolvePnP(importee, importer) {
+    if (!pnp) {
+        return null;
+    }
+    return pnp.resolveToUnqualified(importee, importer);
+}
+
 function isAlias(file, alias) {
     if (alias === file) {
         return true;
@@ -38,14 +47,14 @@ function fromPackageJson(dir, key = true) {
         key = 'module';
     }
 
-    const package = path.resolve(dir, '.', 'package.json');
+    const pkg = path.resolve(dir, '.', 'package.json');
 
-    if (!fs.existsSync(package)) {
+    if (!fs.existsSync(pkg)) {
         return null;
     }
 
     try {
-        const data = JSON.parse(fs.readFileSync(package));
+        const data = JSON.parse(fs.readFileSync(pkg));
 
         if (!data) {
             return null;
@@ -146,10 +155,13 @@ module.exports = function rollupPluginImportResolver(options) {
                 // Check for alias
                 let alias = getAlias(importee, options.alias);
                 if (alias === null) {
-                    if (!options.modulesDir) {
-                        return null;
+                    file = resolvePnP(importee, importer);
+                    if (file == null) {
+                        if (!options.modulesDir) {
+                            return null;
+                        }
+                        file = path.resolve(options.modulesDir, importee);
                     }
-                    file = path.resolve(options.modulesDir, importee);
                 } else {
                     let aliasPath = options.alias[alias];
                     if (aliasPath.length > 0 && aliasPath[0] !== '.' && aliasPath[0] !== '/') {
@@ -171,8 +183,11 @@ module.exports = function rollupPluginImportResolver(options) {
                 }
             }
             else {
-                // Local import is relative to importer
-                file = path.resolve(importer, '..', importee);
+                file = resolvePnP(importee, importer);
+                if (file == null) {
+                    // Local import is relative to importer
+                    file = path.resolve(importer, '..', importee);
+                }
             }
 
             if (!cache.hasOwnProperty(file)) {
