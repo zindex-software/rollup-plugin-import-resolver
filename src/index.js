@@ -164,22 +164,28 @@ module.exports = function rollupPluginImportResolver(options) {
                     }
                 } else {
                     let aliasPath = options.alias[alias];
-                    if (aliasPath.length > 0 && aliasPath[0] !== '.' && aliasPath[0] !== '/') {
-                        aliasPath = alias + '/' + aliasPath;
-                        if (options.modulesDir) {
-                            aliasPath = path.resolve(options.modulesDir, aliasPath);
+                    const isFsPath = aliasPath.length > 0 && (aliasPath[0] === '.' || aliasPath[0] === '/');
+
+                    if (!isFsPath && pnp) {
+                        file = resolvePnP(aliasPath, importer);
+                    } else {
+                        if (!isFsPath) {
+                            aliasPath = alias + '/' + aliasPath;
+                            if (options.modulesDir) {
+                                aliasPath = path.resolve(options.modulesDir, aliasPath);
+                            }
                         }
-                    }
 
-                    if (!fs.statSync(aliasPath).isDirectory()) {
-                        return cache[importee] = aliasPath;
-                    }
+                        if (!fs.statSync(aliasPath).isDirectory()) {
+                            return cache[importee] = aliasPath;
+                        }
 
-                    file = importee.substr(alias.length);
-                    if (file !== '') {
-                        file = '.' + file;
+                        file = importee.substr(alias.length);
+                        if (file !== '') {
+                            file = '.' + file;
+                        }
+                        file = path.resolve(options.alias[alias], file);
                     }
-                    file = path.resolve(options.alias[alias], file);
                 }
             }
             else {
